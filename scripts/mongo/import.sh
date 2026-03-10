@@ -1,0 +1,1 @@
+mongosh --host company-db -u "$DB_MONGO_USER" -p "$DB_MONGO_PASSWORD" --authenticationDatabase admin < /scripts/collections.js

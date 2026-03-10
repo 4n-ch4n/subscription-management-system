@@ -1,0 +1,9 @@
+[submodule "security-ms"]
+	path = security-ms
+	url = https://github.com/4n-ch4n/security-ms.git
+[submodule "company-ms"]
+	path = company-ms
+	url = https://github.com/4n-ch4n/company-ms.git
+[submodule "subscription-ms"]
+	path = subscription-ms
+	url = https://github.com/4n-ch4n/subscription-ms.git
