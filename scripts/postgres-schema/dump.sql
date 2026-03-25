@@ -1,6 +1,6 @@
 CREATE TYPE "subscription_status" AS ENUM ('ACTIVE', 'TRIALING', 'PENDING', 'CANCELLED');
 CREATE TYPE "billing_cycle_enum" AS ENUM ('MONTHLY', 'ANNUAL');
-CREATE TYPE "invoice_status" AS ENUM ('PAID', 'PENDING');
+CREATE TYPE "invoice_status" AS ENUM ('PAID', 'PENDING', 'FAILED', 'VOID', 'REFUNDED');
 
 CREATE TABLE "plans" (
   "id" uuid PRIMARY KEY,
@@ -23,7 +23,7 @@ CREATE TABLE "subscriptions" (
   "company_id" varchar(24) NOT NULL,
   "status" "subscription_status" NOT NULL DEFAULT 'PENDING',
   "start_date" date NOT NULL,
-  "end_date" date NOT NULL,
+  "end_date" date,
   "next_billing_date" date NOT NULL,
   "billing_cycle" "billing_cycle_enum" NOT NULL,
   "auto_renew" bool NOT NULL DEFAULT true,
@@ -46,11 +46,16 @@ CREATE TABLE "subscription_usages" (
 
 CREATE TABLE "invoices" (
   "id" uuid PRIMARY KEY,
+  "invoice_number" varchar UNIQUE NOT NULL,
   "subscription_id" uuid,
+  "company_id" varchar(24) NOT NULL,
   "amount" decimal(10,2) NOT NULL,
+  "currency" varchar(3) NOT NULL,
   "status" "invoice_status" NOT NULL,
   "billing_period_start" date,
   "billing_period_end" date,
+  "due_date" date,
+  "paid_at" timestamp,
   "created_at" timestamp DEFAULT 'now()'
 );
 
