@@ -13,7 +13,7 @@ CREATE TABLE `users` (
 
 CREATE TABLE `user_organizations` (
   `id` CHAR(36) PRIMARY KEY,
-  `user_id` CHAR(36),
+  `user_id` CHAR(36) NOT NULL,
   `company_id` char(24) NOT NULL,
   `rol_id` CHAR(36),
   `joined_at` timestamp DEFAULT CURRENT_TIMESTAMP
