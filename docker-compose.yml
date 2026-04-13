@@ -23,7 +23,7 @@ services:
     volumes:
       - ./company-ms/src:/company-ms/src
     ports:
-      - "3001:30001"
+      - "3001:3001"
     
   subscription-ms:
     build:
@@ -36,7 +36,7 @@ services:
     volumes:
       - ./subscription-ms/src:/subscription-ms/src
     ports:
-      - "3002:30002"
+      - "3002:3002"
 
   subscription-db:
     image: postgres:17
