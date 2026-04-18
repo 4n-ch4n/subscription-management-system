@@ -1,4 +1,4 @@
-CREATE TYPE "subscription_status" AS ENUM ('ACTIVE', 'TRIALING', 'PENDING', 'CANCELLED');
+CREATE TYPE "subscription_status" AS ENUM ('ACTIVE', 'TRIALING', 'PENDING', 'CANCELED');
 CREATE TYPE "billing_cycle_enum" AS ENUM ('MONTHLY', 'ANNUAL');
 CREATE TYPE "invoice_status" AS ENUM ('PAID', 'PENDING', 'FAILED', 'VOID', 'REFUNDED');
 
@@ -14,7 +14,8 @@ CREATE TABLE "plan_features" (
   "plan_id" uuid,
   "feature_code" varchar NOT NULL,
   "limit_value" int,
-  "is_enabled" bool
+  "is_enabled" bool,
+  "is_resettable" bool NOT NULL DEFAULT false
 );
 
 CREATE TABLE "subscriptions" (
@@ -74,19 +75,19 @@ INSERT INTO plans (id, name, description, price) VALUES
 ('d3a3b3c3-3333-4444-8888-000000000003', 'Enterprise', 'Custom limits and dedicated support for large organizations', 199.99);
 
 -- Features for the FREE Plan
-INSERT INTO plan_features (id, plan_id, feature_code, limit_value, is_enabled) VALUES
-(gen_random_uuid(), 'd1a1b1c1-1111-4444-8888-000000000001', 'MAX_USERS', 2, true),
-(gen_random_uuid(), 'd1a1b1c1-1111-4444-8888-000000000001', 'ADVANCED_REPORTS', 0, false),
-(gen_random_uuid(), 'd1a1b1c1-1111-4444-8888-000000000001', 'API_ACCESS', 0, false);
+INSERT INTO plan_features (id, plan_id, feature_code, limit_value, is_enabled, is_resettable) VALUES
+(gen_random_uuid(), 'd1a1b1c1-1111-4444-8888-000000000001', 'MAX_USERS', 2, true, false),
+(gen_random_uuid(), 'd1a1b1c1-1111-4444-8888-000000000001', 'ADVANCED_REPORTS', 0, false, true),
+(gen_random_uuid(), 'd1a1b1c1-1111-4444-8888-000000000001', 'API_ACCESS', 1000, true, true);
 
 -- Features for the PRO Plan
-INSERT INTO plan_features (id, plan_id, feature_code, limit_value, is_enabled) VALUES
-(gen_random_uuid(), 'd2a2b2c2-2222-4444-8888-000000000002', 'MAX_USERS', 20, true),
-(gen_random_uuid(), 'd2a2b2c2-2222-4444-8888-000000000002', 'ADVANCED_REPORTS', 0, true),
-(gen_random_uuid(), 'd2a2b2c2-2222-4444-8888-000000000002', 'API_ACCESS', 0, false);
+INSERT INTO plan_features (id, plan_id, feature_code, limit_value, is_enabled, is_resettable) VALUES
+(gen_random_uuid(), 'd2a2b2c2-2222-4444-8888-000000000002', 'MAX_USERS', 20, true, false),
+(gen_random_uuid(), 'd2a2b2c2-2222-4444-8888-000000000002', 'ADVANCED_REPORTS', 50, true, true),
+(gen_random_uuid(), 'd2a2b2c2-2222-4444-8888-000000000002', 'API_ACCESS', 10000, true, true);
 
 -- Features for the ENTERPRISE Plan (Unlimited)
-INSERT INTO plan_features (id, plan_id, feature_code, limit_value, is_enabled) VALUES
-(gen_random_uuid(), 'd3a3b3c3-3333-4444-8888-000000000003', 'MAX_USERS', 9999, true), -- Effectively unlimited
-(gen_random_uuid(), 'd3a3b3c3-3333-4444-8888-000000000003', 'ADVANCED_REPORTS', 0, true),
-(gen_random_uuid(), 'd3a3b3c3-3333-4444-8888-000000000003', 'API_ACCESS', 0, true);
+INSERT INTO plan_features (id, plan_id, feature_code, limit_value, is_enabled, is_resettable) VALUES
+(gen_random_uuid(), 'd3a3b3c3-3333-4444-8888-000000000003', 'MAX_USERS', 9999, true, false), -- Effectively unlimited
+(gen_random_uuid(), 'd3a3b3c3-3333-4444-8888-000000000003', 'ADVANCED_REPORTS', 9999, true, true),
+(gen_random_uuid(), 'd3a3b3c3-3333-4444-8888-000000000003', 'API_ACCESS', 999999, true, true);

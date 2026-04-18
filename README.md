@@ -34,6 +34,7 @@ This repository links to three Git submodules representing the core domains:
 - **Validation & Docs:** Zod, OpenAPI (Swagger)
 - **Databases:** MySQL 8, MongoDB 8, PostgreSQL 17
 - **Containerization:** Docker, Docker Compose
+- **Cloud & Infrastructure:** AWS CDK, AWS Lambda, Amazon EventBridge, AWS Secrets Manager
 - **Scripting & Tooling:** bash, pnpm
 
 ## Local Development & Environment Setup
@@ -74,5 +75,16 @@ Once running, the interconnected endpoints and auto-generated OpenAPI Swagger do
 - **Company-MS:** `http://localhost:3001/public/api-docs`
 - **Subscription-MS:** `http://localhost:3002/public/api-docs`
 
-## Future Architecture Roadmap
-While the core domain services interact synchronously over HTTP, the ecosystem is decoupled to support future migrations to serverless infrastructures (e.g., AWS Lambdas) alongside message brokers (e.g., AWS SQS or EventBridge) for asynchronous tasks like cron-based subscription renewals and usage roll-ups.
+## Serverless Cloud Infrastructure (AWS CDK)
+
+To handle scheduled recurring operations without overloading the synchronous API microservices, the platform includes a fully automated Infrastructure-as-Code (IaC) deployment utilizing the AWS Cloud Development Kit (CDK).
+
+Located in the `infrastructure/` directory, this robust stack securely provisions:
+
+- **Amazon EventBridge Rules:** Cron schedules executing recurring background jobs.
+- **AWS Lambda Functions:** Highly concurrent Node.js serverless functions bundled via `esbuild`.
+  - `renewSubscriptions`: Evaluates active subscriptions, dynamically calculates next billing cycles, generates pending invoices, and conditionally resets metered feature allocations utilizing atomic transaction blocks (`BEGIN`/`COMMIT`).
+  - `expireSubscriptions`: Executes bulk state cancellations for past-due unpaid invoices or scheduled plan non-renewals utilizing optimized single-query updates, aggressively minimizing database overhead.
+- **AWS Secrets Manager:** Securely injects KMS-encrypted database credentials directly into the serverless runtime environments using the AWS SDK, removing hardcoded logic vulnerabilities.
+
+While the core domain services interact synchronously over HTTP, this decoupled event-driven serverless architecture ensures infinite horizontal scalability for critical background billing tasks.
